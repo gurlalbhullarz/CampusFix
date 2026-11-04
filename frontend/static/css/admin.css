@@ -1,0 +1,86 @@
+/* CampusFix — Admin portal: admin sign-in/registration, dashboard, workspace */
+
+/* ===================== ADMIN PORTAL AUTH ===================== */
+.admin-auth-wrap{min-height:100vh;display:flex;flex-direction:column;background:radial-gradient(900px 500px at 80% -10%,rgba(77,141,255,.22),transparent 60%),radial-gradient(700px 500px at -10% 110%,rgba(34,211,238,.12),transparent 60%),#070a12;color:var(--ink);position:relative;overflow:hidden}
+.admin-auth-wrap::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse 60% 60% at 50% 40%,#000,transparent 80%);pointer-events:none}
+.admin-auth-top{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 28px}
+.admin-auth-top .logo{color:#fff}
+.admin-auth-top .logo small{font-weight:600;color:var(--muted);font-size:.8rem;margin-left:2px}
+.admin-auth-top .row{display:flex;gap:8px;align-items:center}
+.admin-auth-main{position:relative;flex:1;display:grid;place-items:center;padding:24px 20px 56px}
+.admin-card{width:100%;max-width:460px;padding:36px;border-radius:28px;background:rgba(18,23,34,.72);-webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%);border:1px solid rgba(255,255,255,.08);box-shadow:0 40px 80px -30px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.05)}
+.admin-card .shield{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(135deg,rgba(77,141,255,.25),rgba(34,211,238,.15));border:1px solid rgba(77,141,255,.35);color:#9cc0ff;margin-bottom:20px}
+.admin-card .shield svg{width:26px;height:26px}
+.admin-card h2{margin:10px 0 6px;font-size:1.7rem}
+.admin-card > p{margin-bottom:24px}
+.secure-note{display:flex;gap:10px;align-items:center;margin-top:18px;padding:10px 12px;border-radius:12px;background:rgba(79,211,160,.08);border:1px solid rgba(79,211,160,.2);font-size:.78rem;color:#9fe3c6}
+.secure-note svg{width:15px;height:15px;flex:none}
+.admin-links{margin-top:20px;display:grid;gap:8px;text-align:center;font-size:.85rem;color:var(--muted)}
+.admin-links a{font-weight:600}
+.admin-links .back{color:var(--muted);font-weight:500}
+
+
+/* ===================== ADMIN ===================== */
+.admin-shell{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+.sidebar{background:linear-gradient(180deg,#0b1220,#070a12);border-right:1px solid rgba(255,255,255,.06);color:#c9d5e5;padding:22px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:4px}
+.sidebar .side-label{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6d82a0;padding:14px 12px 8px}
+.sidebar a,.sidebar button.side-btn{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;width:100%;border:0;background:none;cursor:pointer;font-family:var(--font);text-align:left;color:#c9d5e5;font-size:.87rem;font-weight:600;transition:background .15s,color .15s}
+.sidebar a:hover,.sidebar button.side-btn:hover{background:rgba(255,255,255,.06);color:#fff}
+.sidebar .portal-tag{display:inline-block;margin-top:4px;padding:2px 8px;border-radius:999px;background:rgba(77,141,255,.16);color:#9cc0ff;font-size:.66rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.sidebar a.active{background:rgba(255,255,255,.1);color:#fff}
+.sidebar a svg,.sidebar button.side-btn svg{width:17px;height:17px;opacity:.85}
+.sidebar .side-btn .i-sun{display:none}
+[data-theme="dark"] .sidebar .side-btn .i-sun{display:block}
+[data-theme="dark"] .sidebar .side-btn .i-moon{display:none}
+.sidebar .side-brand{display:flex;align-items:center;gap:10px;padding:4px 12px 14px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:6px}
+.sidebar .side-brand .logo-mark{background:var(--accent-grad)}
+.sidebar .side-brand b{color:#fff;font-size:.92rem}
+.sidebar .side-brand span{display:block;font-size:.74rem;color:#7f93b0}
+.sidebar .side-bottom{margin-top:auto;border-top:1px solid rgba(255,255,255,.08);padding-top:10px}
+.admin-main{padding:36px 40px;min-width:0}
+.admin-topbar{position:sticky;top:12px;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px 10px 18px;margin-bottom:28px;border-radius:999px;background:var(--glass);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border:1px solid var(--glass-line);box-shadow:var(--shadow-float)}
+.admin-topbar .crumb{font-size:.85rem;font-weight:600;color:var(--muted)}
+.admin-topbar .crumb b{color:var(--ink)}
+.admin-topbar .row{display:flex;gap:8px;align-items:center}
+.admin-id{font-size:.74rem;color:#7f93b0;font-family:var(--mono)}
+.chart-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-bottom:24px}
+.chart-grid > .card{min-width:0}
+.chart-box{height:320px;padding:18px 22px 20px;position:relative}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}
+.toolbar .search{position:relative;flex:1;min-width:220px}
+.toolbar .search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--faint);width:16px;height:16px}
+.toolbar .search input{padding-left:36px;height:38px}
+.toolbar select{width:auto;min-width:150px;height:38px}
+.toolbar .count{font-size:.8rem;color:var(--muted);font-weight:600;margin-left:auto}
+
+
+/* Admin portal is its own workspace: no public header/footer */
+body.admin-view footer.site,body.admin-view header.site{display:none}
+
+/* Analytics loading / error overlay */
+.chart-state{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px;text-align:center;color:var(--muted);background:var(--surface);border-radius:inherit;z-index:2}
+.chart-state small{font-size:.8rem;max-width:240px}
+.chart-box.is-loading .chart-state,.chart-box.is-error .chart-state{display:flex}
+.chart-box.is-error .chart-state small{color:var(--red)}
+.chart-spinner{width:26px;height:26px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--blue);animation:spin .8s linear infinite}
+@media (prefers-reduced-motion:reduce){.chart-spinner{animation-duration:2s}}
+
+/* Chart cards: header with expand button */
+.chart-card{transition:box-shadow .2s,transform .2s}
+.chart-card:hover{box-shadow:0 12px 32px -18px rgba(15,28,46,.35)}
+.chart-card .card-head-text{display:flex;flex-direction:column;gap:2px;min-width:0}
+.chart-card .card-head-text p{color:var(--muted)}
+.chart-icon-btn{flex:none;width:34px;height:34px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);display:grid;place-items:center;cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform .2s}
+.chart-icon-btn:hover{color:var(--blue);border-color:var(--blue);background:var(--blue-50);transform:scale(1.06)}
+.chart-card .chart-box{cursor:zoom-in}
+
+/* Full-screen chart modal */
+.chart-modal{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:28px;background:rgba(5,10,20,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.chart-modal.open{display:flex;animation:fade .2s ease}
+.chart-modal-panel{width:min(1200px,100%);height:min(780px,100%);display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:24px;box-shadow:0 30px 80px rgba(0,0,0,.45);overflow:hidden}
+.chart-modal-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 26px;border-bottom:1px solid var(--line)}
+.chart-modal-head h3{font-size:1.25rem}
+.chart-modal-head p{font-size:.85rem;color:var(--muted);margin-top:2px}
+.chart-modal-head p:empty{display:none}
+.chart-modal-body{flex:1;min-height:0;padding:26px 32px 30px;position:relative}
+@media (max-width:640px){.chart-modal{padding:10px}.chart-modal-panel{border-radius:18px}.chart-modal-body{padding:16px}}

@@ -1,0 +1,124 @@
+/* CampusFix — Design tokens, light/dark themes, base, layout, header, footer */
+
+/* ===================== DESIGN TOKENS ===================== */
+:root{
+  --navy-950:#0a1a2f; --navy-900:#0f2744; --navy-800:#16355c; --navy-700:#1e4577;
+  --blue:#2457c5; --blue-600:#1d4aab; --blue-50:#eef3fc; --blue-100:#dce6f9;
+  --bg:#f6f8fb; --surface:#ffffff; --subtle:#f1f4f8;
+  --ink:#0f1c2e; --ink-2:#334155; --muted:#64748b; --faint:#94a3b8;
+  --line:#e3e8ef; --line-2:#d3dbe6;
+  --amber:#b45309; --amber-bg:#fef6e7; --amber-line:#f8e1b4;
+  --sky:#1d4ed8; --sky-bg:#eaf1fe; --sky-line:#c9dafc;
+  --green:#047857; --green-bg:#e8f7f0; --green-line:#bfe8d5;
+  --red:#b91c1c; --red-bg:#fdeeee; --red-line:#f6cccc;
+  --slate-bg:#eef1f5;
+  --radius-sm:10px; --radius:14px; --radius-lg:20px;
+  --shadow-xs:0 1px 2px rgba(15,28,46,.05);
+  --shadow-sm:0 1px 3px rgba(15,28,46,.06),0 1px 2px rgba(15,28,46,.04);
+  --shadow:0 4px 16px -4px rgba(15,28,46,.08),0 2px 4px -2px rgba(15,28,46,.04);
+  --shadow-lg:0 20px 40px -16px rgba(15,28,46,.18);
+  --ring:0 0 0 4px rgba(36,87,197,.14);
+  --font:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --ease:cubic-bezier(.2,.7,.2,1);
+  /* semantic tokens used by the redesign */
+  --heading:var(--navy-950); --btn-solid:var(--navy-900); --btn-solid-hover:var(--navy-800); --btn-solid-ink:#fff;
+  --glass:rgba(255,255,255,.72); --glass-line:rgba(15,28,46,.08);
+  --shadow-float:0 10px 30px -12px rgba(15,28,46,.18),0 2px 6px -2px rgba(15,28,46,.06);
+  --row-hover:#f7f9fc; --line-strong:#bfcadb; --toast-bg:#0a1a2f; --toast-ink:#fff;
+  --glow-1:rgba(36,87,197,.10); --glow-2:rgba(14,165,233,.08);
+  --accent-grad:linear-gradient(135deg,#2457c5 0%,#0ea5e9 100%);
+  color-scheme:light;
+}
+
+/* DARK THEME — layered charcoal surfaces, not inverted colours.
+   .portal-dark re-uses the same tokens for always-dark admin areas. */
+[data-theme="dark"], .portal-dark{
+  --bg:#0a0d14; --surface:#121722; --subtle:#181f2d;
+  --ink:#eef2f8; --ink-2:#c7d0de; --muted:#93a0b6; --faint:#6f7c93;
+  --line:#222a3a; --line-2:#2e384b; --line-strong:#41506a;
+  --blue:#4d8dff; --blue-600:#6ea2ff; --blue-50:rgba(77,141,255,.12); --blue-100:rgba(77,141,255,.22);
+  --amber:#f4b860; --amber-bg:rgba(244,184,96,.10); --amber-line:rgba(244,184,96,.26);
+  --sky:#86b4ff; --sky-bg:rgba(77,141,255,.10); --sky-line:rgba(77,141,255,.28);
+  --green:#4fd3a0; --green-bg:rgba(79,211,160,.10); --green-line:rgba(79,211,160,.26);
+  --red:#ff8585; --red-bg:rgba(255,107,107,.10); --red-line:rgba(255,107,107,.28);
+  --slate-bg:#1b2333;
+  --heading:#f5f8fc; --btn-solid:#eef2f8; --btn-solid-hover:#ffffff; --btn-solid-ink:#0a0d14;
+  --glass:rgba(20,26,38,.68); --glass-line:rgba(255,255,255,.08);
+  --shadow-xs:0 1px 2px rgba(0,0,0,.3);
+  --shadow-sm:0 1px 3px rgba(0,0,0,.35),0 1px 2px rgba(0,0,0,.25);
+  --shadow:0 8px 24px -8px rgba(0,0,0,.5);
+  --shadow-lg:0 24px 48px -16px rgba(0,0,0,.6);
+  --shadow-float:0 12px 34px -12px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.02);
+  --ring:0 0 0 4px rgba(77,141,255,.22);
+  --row-hover:#161c29; --toast-bg:#eef2f8; --toast-ink:#0a0d14;
+  --glow-1:rgba(77,141,255,.12); --glow-2:rgba(34,211,238,.06);
+  color-scheme:dark;
+}
+/* Smooth colour transition only while switching themes */
+html.theme-anim *,html.theme-anim *::before,html.theme-anim *::after{transition:background-color .35s var(--ease),border-color .35s var(--ease),color .35s var(--ease),fill .35s,box-shadow .35s!important}
+
+
+/* ===================== BASE ===================== */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px;overflow-x:clip}
+body{overflow-x:clip}
+body{margin:0;font-family:var(--font);font-size:15px;line-height:1.6;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(800px 500px at 85% -5%,var(--glow-1),transparent 60%),radial-gradient(700px 500px at 0% 30%,var(--glow-2),transparent 60%)}
+h1,h2,h3,h4{margin:0;color:var(--heading);letter-spacing:-.02em;line-height:1.2}
+h1{font-size:clamp(2.2rem,4.8vw,3.6rem);font-weight:800;letter-spacing:-.035em;line-height:1.08}
+h2{font-size:clamp(1.45rem,2.4vw,1.85rem);font-weight:700}
+h3{font-size:1.05rem;font-weight:700}
+p{margin:0;color:var(--muted)}
+a{color:var(--blue);text-decoration:none}
+a:hover{color:var(--blue-600)}
+svg.i{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.mono{font-family:var(--mono);font-size:.82em;letter-spacing:-.01em}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+
+/* ===================== LAYOUT ===================== */
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+main{min-height:calc(100vh - 76px)}
+.page{display:none;animation:fade .25s var(--ease)}
+.page#home{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.page-pad{padding:40px 0 72px}
+
+
+/* ===================== HEADER ===================== */
+/* Floating pill navigation */
+header.site{position:sticky;top:0;z-index:40;padding:12px 16px 0;pointer-events:none}
+header.site nav.container{pointer-events:auto;max-width:1120px;height:58px;padding:0 8px 0 18px;display:flex;align-items:center;gap:18px;border-radius:999px;background:var(--glass);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border:1px solid var(--glass-line);box-shadow:var(--shadow-float);transition:box-shadow .3s var(--ease),transform .3s var(--ease)}
+header.site.scrolled nav.container{box-shadow:var(--shadow-lg)}
+.logo{display:inline-flex;align-items:center;gap:10px;font-weight:800;font-size:1.05rem;color:var(--heading);letter-spacing:-.02em}
+.logo:hover{color:var(--heading)}
+.logo-mark{width:30px;height:30px;border-radius:9px;background:var(--accent-grad);display:grid;place-items:center;color:#fff;box-shadow:0 4px 12px -4px rgba(36,87,197,.6)}
+.logo-mark svg{width:17px;height:17px;stroke-width:2.2}
+.navlinks{display:flex;align-items:center;gap:2px;margin-left:4px}
+.navlinks a{padding:7px 13px;border-radius:999px;font-size:.88rem;font-weight:600;color:var(--ink-2);transition:background .15s,color .15s}
+.navlinks a:hover,.navlinks a.active{background:var(--subtle);color:var(--ink)}
+.nav-actions{margin-left:auto;display:flex;align-items:center;gap:8px}
+.nav-user{display:none;align-items:center;gap:10px;font-size:.86rem;font-weight:600;color:var(--ink-2)}
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--blue-100);color:var(--blue);display:grid;place-items:center;font-weight:700;font-size:.8rem}
+.menu-toggle{display:none;margin-left:6px;background:none;border:1px solid var(--line);border-radius:999px;width:38px;height:38px;place-items:center;cursor:pointer;color:var(--ink)}
+/* Theme toggle (sun/moon) */
+.theme-toggle{width:38px;height:38px;flex:none;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);display:grid;place-items:center;cursor:pointer;transition:background .2s,color .2s,transform .2s,border-color .2s}
+.theme-toggle:hover{color:var(--ink);border-color:var(--line-2);transform:rotate(-12deg)}
+.theme-toggle svg{width:17px;height:17px}
+.theme-toggle .i-sun{display:none}
+[data-theme="dark"] .theme-toggle .i-sun{display:block}
+[data-theme="dark"] .theme-toggle .i-moon{display:none}
+body.signed-in .nav-guest{display:none}
+body.signed-in .nav-user{display:flex}
+
+
+/* ===================== FOOTER ===================== */
+footer.site{background:color-mix(in srgb,var(--surface) 80%,transparent);border-top:1px solid var(--line)}
+.foot-inner{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;padding:48px 0 32px}
+.foot-inner p{font-size:.86rem;margin-top:12px;max-width:320px}
+.foot-inner h4{font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.foot-inner ul{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.foot-inner ul a{font-size:.88rem;color:var(--ink-2);font-weight:500}
+.foot-inner ul a:hover{color:var(--ink)}
+.foot-bottom{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:18px 0 26px;border-top:1px solid var(--line);font-size:.8rem;color:var(--faint)}

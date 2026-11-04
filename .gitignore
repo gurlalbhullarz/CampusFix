@@ -1,6 +1,27 @@
+# Python
 venv/
 __pycache__/
 *.pyc
+
+# Environment and secrets
 .env
+Admin_registration_codes.txt
+
+# Database files
 *.db
+*.db-wal
+*.db-shm
+
+# Uploaded complaint images
+uploads/*
+!uploads/.gitkeep
+# Private invitation codes
+Admin_registration_codes.txt
+
+# Database backups
+*.bak
+*.db-wal
+*.db-shm
+
+# Uploaded complaint images
 uploads/*

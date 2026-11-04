@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f2744">
+<meta name="description" content="CampusFix — report campus maintenance issues anonymously or confidentially and track them to resolution.">
+<title>CampusFix | Campus Maintenance, Made Simple</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script>
+/* THEME BOOTSTRAP — runs before paint so there is no flash of the wrong theme.
+   Saved choice wins; otherwise follow the device setting. */
+(function(){try{var t=localStorage.getItem("campusfix-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();
+</script>
+<link rel="stylesheet" href="/static/css/main.css">
+<link rel="stylesheet" href="/static/css/components.css">
+<link rel="stylesheet" href="/static/css/student.css">
+<link rel="stylesheet" href="/static/css/admin.css">
+<link rel="stylesheet" href="/static/css/responsive.css">
+</head>
+<body>
+<div class="lightbox" id="imageLightbox" role="dialog" aria-modal="true" aria-label="Complaint image preview" aria-hidden="true">
+  <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Close image preview">&times;</button>
+  <figure><img id="lightboxImg" alt=""><p class="lightbox-err" id="lightboxErr" style="display:none">This image is no longer available.</p><figcaption id="lightboxCap"></figcaption></figure>
+</div>
+
+<!-- SVG ICON SPRITE -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M9.9 4.24A9.1 9.1 0 0 1 12 4c6.5 0 10 8 10 8a17.6 17.6 0 0 1-2.16 3.19M6.6 6.6A17.4 17.4 0 0 0 2 12s3.5 8 10 8a9.7 9.7 0 0 0 5.4-1.6M2 2l20 20M14.12 14.12a3 3 0 1 1-4.24-4.24"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+  <symbol id="i-incognito" viewBox="0 0 24 24"><path d="M3 11h18M5 11l2-6h10l2 6"/><circle cx="7" cy="16" r="3"/><circle cx="17" cy="16" r="3"/><path d="M10 16h4"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+  <symbol id="i-activity" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 10 5-10 5L2 7l10-5z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-loader" viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></symbol>
+  <symbol id="i-inbox" viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></symbol>
+  <symbol id="i-droplet" viewBox="0 0 24 24"><path d="M12 2.7s-6 6.3-6 11.3a6 6 0 0 0 12 0c0-5-6-11.3-6-11.3z"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/></symbol>
+  <symbol id="i-chair" viewBox="0 0 24 24"><path d="M7 3h10v8H7zM5 11h14v3H5zM7 14v7M17 14v7"/></symbol>
+  <symbol id="i-building" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"/></symbol>
+  <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></symbol>
+  <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.3-9.3M17 6l3 3M14 9l2 2"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+</svg>
+
+<header class="site">
+  <nav class="container" aria-label="Main">
+    <a class="logo" href="#home"><span class="logo-mark"><svg class="i"><use href="#i-wrench"/></svg></span>CampusFix</a>
+    <div class="navlinks" id="navLinks">
+      <a href="#home" data-nav="home">Home</a>
+      <a href="#how" data-nav="how">How it works</a>
+      <a href="#report" data-nav="report">Report issue</a>
+      <a href="#track" data-nav="track">Track complaint</a>
+      <a href="#student" data-nav="student" class="nav-role nav-role-student" hidden>My dashboard</a>
+      <a href="#admin" data-nav="admin" class="nav-role nav-role-admin" hidden>Admin</a>
+    </div>
+    <div class="nav-actions">
+      <span class="nav-guest"><a class="btn ghost" href="#login">Log in</a></span>
+      <span class="nav-guest"><a class="btn" href="#register">Create account</a></span>
+      <span class="nav-user"><span class="avatar" id="navAvatar">?</span><span id="navUserName"></span>
+        <button class="btn alt small" type="button" id="navLogout"><svg class="i"><use href="#i-logout"/></svg>Log out</button></span>
+    </div>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark mode" title="Toggle light / dark mode"><svg class="i i-moon"><use href="#i-moon"/></svg><svg class="i i-sun"><use href="#i-sun"/></svg></button>
+    <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open menu" aria-expanded="false"><svg class="i"><use href="#i-menu"/></svg></button>
+  </nav>
+</header>
+
+<main>
+
+<!-- ===================== LANDING ===================== -->
+<section class="page" id="home">
+  <div class="hero">
+    <div class="container hero-inner">
+      <div>
+        <span class="pill"><b>CampusFix</b>Campus maintenance, simplified</span>
+        <h1>A better campus starts when reporting a problem becomes <em>easier than ignoring it.</em></h1>
+        <p class="lead">CampusFix lets students report broken fixtures, outages and safety hazards in under a minute — then follow every update until the issue is resolved.</p>
+        <div class="hero-actions">
+          <a class="btn primary lg" href="#report">Report an issue<svg class="i"><use href="#i-arrow"/></svg></a>
+          <a class="btn alt lg" href="#track">Track complaint</a>
+        </div>
+        <div class="hero-points">
+          <span><svg class="i"><use href="#i-check-circle"/></svg>No account needed to report</span>
+          <span><svg class="i"><use href="#i-check-circle"/></svg>Private tracking ID</span>
+          <span><svg class="i"><use href="#i-check-circle"/></svg>Full status history</span>
+        </div>
+      </div>
+      <div class="mock-wrap"><div class="mock" id="heroMock" aria-hidden="true">
+        <div class="mock-bar"><i></i><i></i><i></i><span>Complaint tracking</span></div>
+        <div class="mock-body">
+          <div class="mock-id"><div><small>Tracking ID</small><span class="mono">CF-••••••••••••</span></div><span class="badge progress" id="mockBadge">In Progress</span></div>
+          <h4>Ceiling fan not working</h4>
+          <div class="loc"><svg class="i"><use href="#i-pin"/></svg>Classroom · Electrical</div>
+          <div class="stepper" id="mockStepper">
+            <div class="step done"><div class="dot"><svg class="i"><use href="#i-check"/></svg></div>Pending</div>
+            <div class="step current"><div class="dot"><svg class="i"><use href="#i-loader"/></svg></div>In Progress</div>
+            <div class="step"><div class="dot"><svg class="i"><use href="#i-check"/></svg></div>Resolved</div>
+          </div>
+          <div class="mock-note" id="mockNote"><svg class="i"><use href="#i-activity"/></svg><div><b>Technician assigned</b>Electrical team is inspecting the fan wiring.</div></div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="section" id="how">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">How it works</span>
+        <h2>From report to resolution in three steps</h2>
+        <p>No paperwork, no chasing staff. Every issue gets a tracking ID and a clear owner.</p>
+      </div>
+      <div class="steps-grid">
+        <div class="card feature"><span class="num">01</span><div class="ico"><svg class="i"><use href="#i-plus"/></svg></div><h3>Report</h3><p>Choose a category and location, describe the problem and optionally attach a photo.</p></div>
+        <div class="card feature"><span class="num">02</span><div class="ico"><svg class="i"><use href="#i-search"/></svg></div><h3>Track</h3><p>Use your private tracking ID to see the current status and every update from staff.</p></div>
+        <div class="card feature"><span class="num">03</span><div class="ico"><svg class="i"><use href="#i-check-circle"/></svg></div><h3>Resolve</h3><p>Maintenance teams prioritise, act and record remarks until the issue is closed.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section band">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Core features</span>
+        <h2>Report safely. Follow transparently.</h2>
+        <p>Everything students and staff need to get campus issues fixed, without the paperwork.</p>
+      </div>
+      <div class="features-grid">
+        <div class="card feature"><div class="ico"><svg class="i"><use href="#i-incognito"/></svg></div><h3>Anonymous reporting</h3><p>Submit without an account. Your name and email are not attached to the report.</p></div>
+        <div class="card feature"><div class="ico"><svg class="i"><use href="#i-lock"/></svg></div><h3>Confidential reporting</h3><p>Sign in to link a report to your account and follow it from your dashboard.</p></div>
+        <div class="card feature"><div class="ico"><svg class="i"><use href="#i-activity"/></svg></div><h3>Real-time status tracking</h3><p>Every report gets a private tracking ID showing its live status.</p></div>
+        <div class="card feature"><div class="ico"><svg class="i"><use href="#i-clock"/></svg></div><h3>Transparent history</h3><p>A time-stamped record of each status change and staff remark.</p></div>
+        <div class="card feature"><div class="ico"><svg class="i"><use href="#i-chart"/></svg></div><h3>Admin management & analytics</h3><p>Staff prioritise, update and analyse complaints from one portal.</p></div>
+        <div class="card feature"><div class="ico"><svg class="i"><use href="#i-image"/></svg></div><h3>Photo evidence</h3><p>Attach an optional photo so the right team understands the problem.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Categories</span>
+        <h2>What can you report?</h2>
+      </div>
+      <div class="categories" id="homeCategories">
+        <button type="button" class="category" data-category="Electrical"><svg class="i"><use href="#i-zap"/></svg>Electrical</button>
+        <button type="button" class="category" data-category="Plumbing"><svg class="i"><use href="#i-droplet"/></svg>Plumbing</button>
+        <button type="button" class="category" data-category="Cleanliness"><svg class="i"><use href="#i-sparkle"/></svg>Cleanliness</button>
+        <button type="button" class="category" data-category="Furniture"><svg class="i"><use href="#i-chair"/></svg>Furniture</button>
+        <button type="button" class="category" data-category="Infrastructure"><svg class="i"><use href="#i-building"/></svg>Infrastructure</button>
+        <button type="button" class="category" data-category="Internet/Wi-Fi"><svg class="i"><use href="#i-wifi"/></svg>Internet / Wi‑Fi</button>
+        <button type="button" class="category" data-category="Other"><svg class="i"><use href="#i-dots"/></svg>Other</button>
+      </div>
+      <div class="cta" style="margin-top:64px">
+        <div style="position:relative;z-index:1"><h2>Make your campus better, one report at a time.</h2><p>It takes less than a minute. You don't even need an account.</p></div>
+        <div class="cta-actions"><a class="btn alt lg" href="#report">Report an issue</a><a class="btn outline lg" href="#track">Track a complaint</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== LOGIN ===================== -->
+<section class="page" id="login">
+  <div class="auth-wrap">
+    <aside class="auth-side">
+      <div>
+        <span class="eyebrow">Student portal</span>
+        <h2 style="margin-top:14px">Every report, every update — in one place.</h2>
+        <p>Sign in to see your confidential complaints and follow their progress.</p>
+        <ul>
+          <li><span class="ico"><svg class="i"><use href="#i-grid"/></svg></span>Personal dashboard with status counts</li>
+          <li><span class="ico"><svg class="i"><use href="#i-lock"/></svg></span>Confidential reports linked to your account</li>
+          <li><span class="ico"><svg class="i"><use href="#i-clock"/></svg></span>Full history of updates from staff</li>
+        </ul>
+      </div>
+      <p style="font-size:.8rem;color:#7f93b0">For students. Staff sign in through the Administrator Portal.</p>
+    </aside>
+    <div class="auth-main">
+      <div class="auth-card">
+        <span class="eyebrow">Welcome back</span>
+        <h2>Student login</h2>
+        <p>Use your registered college email.</p>
+        <form id="loginForm" novalidate>
+          <div class="field">
+            <label for="loginEmail">Email</label>
+            <input type="email" id="loginEmail" name="email" required autocomplete="email" placeholder="you@college.edu">
+          </div>
+          <div class="field">
+            <label for="loginPassword">Password</label>
+            <div class="input-wrap">
+              <input type="password" id="loginPassword" name="password" required autocomplete="current-password" placeholder="Enter your password">
+              <button type="button" class="pw-toggle" data-target="loginPassword" aria-label="Show password"><svg class="i"><use href="#i-eye"/></svg></button>
+            </div>
+          </div>
+          <p id="loginMessage" class="notice" style="display:none" role="alert"></p>
+          <div class="form-actions"><button class="btn primary lg block" type="submit">Log in</button></div>
+        </form>
+        <p class="auth-foot">New to CampusFix? <a href="#register">Create a student account</a></p>
+        <div class="portal-switch"><svg class="i"><use href="#i-shield"/></svg><span>Campus staff? <a href="#admin-login">Go to the Administrator Portal</a></span></div>
+        <p class="auth-foot" style="margin-top:14px"><a href="#home" style="color:var(--muted);font-weight:500">← Back to home</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== REGISTER ===================== -->
+<section class="page" id="register">
+  <div class="auth-wrap">
+    <aside class="auth-side">
+      <div>
+        <span class="eyebrow">Join CampusFix</span>
+        <h2 style="margin-top:14px">Help keep your campus working.</h2>
+        <p>A student account lets you file confidential reports and track them from your dashboard.</p>
+        <ul>
+          <li><span class="ico"><svg class="i"><use href="#i-shield"/></svg></span>Passwords are securely hashed</li>
+          <li><span class="ico"><svg class="i"><use href="#i-incognito"/></svg></span>You can still report anonymously anytime</li>
+          <li><span class="ico"><svg class="i"><use href="#i-activity"/></svg></span>Track every complaint you submit</li>
+        </ul>
+      </div>
+      <p style="font-size:.8rem;color:#7f93b0">Takes less than a minute.</p>
+    </aside>
+    <div class="auth-main">
+      <div class="auth-card">
+        <span class="eyebrow">Create account</span>
+        <h2>Student registration</h2>
+        <p>Register to submit and track confidential complaints.</p>
+        <form id="registerForm" novalidate>
+          <div class="field">
+            <label for="registerName">Full name</label>
+            <input id="registerName" name="name" type="text" required autocomplete="name" placeholder="Your full name">
+          </div>
+          <div class="field">
+            <label for="registerEmail">College email</label>
+            <input id="registerEmail" name="email" type="email" required autocomplete="email" placeholder="you@college.edu">
+          </div>
+          <div class="field">
+            <label for="registerPassword">Password</label>
+            <div class="input-wrap">
+              <input id="registerPassword" name="password" type="password" minlength="8" required autocomplete="new-password" placeholder="At least 8 characters">
+              <button type="button" class="pw-toggle" data-target="registerPassword" aria-label="Show password"><svg class="i"><use href="#i-eye"/></svg></button>
+            </div>
+            <p class="hint">Minimum 8 characters.</p>
+          </div>
+          <p id="registerMessage" class="notice" style="display:none" role="alert"></p>
+          <div class="form-actions"><button class="btn primary lg block" type="submit">Create account</button></div>
+        </form>
+        <p class="auth-foot">Already registered? <a href="#login">Log in</a></p>
+        <div class="portal-switch"><svg class="i"><use href="#i-shield"/></svg><span>Registering as staff? <a href="#admin-register">Use Admin registration</a></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ADMIN LOGIN (separate portal) ===================== -->
+<section class="page" id="admin-login">
+  <div class="admin-auth-wrap portal-dark">
+    <div class="admin-auth-top">
+      <a class="logo" href="#home"><span class="logo-mark"><svg class="i"><use href="#i-wrench"/></svg></span>CampusFix <small>Admin</small></a>
+      <div class="row"><a class="btn ghost small" href="#home">← CampusFix website</a><button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark mode" title="Toggle light / dark mode"><svg class="i i-moon"><use href="#i-moon"/></svg><svg class="i i-sun"><use href="#i-sun"/></svg></button></div>
+    </div>
+    <div class="admin-auth-main">
+      <div class="admin-card">
+        <div class="shield"><svg class="i"><use href="#i-shield"/></svg></div>
+        <span class="eyebrow">CampusFix Admin Portal</span>
+        <h2>Administrator Portal</h2>
+        <p>Restricted to authorised campus maintenance staff.</p>
+        <form id="adminLoginForm" novalidate>
+          <div class="field">
+            <label for="adminLoginEmail">Admin email</label>
+            <input type="email" id="adminLoginEmail" required autocomplete="email" placeholder="admin@college.edu">
+          </div>
+          <div class="field">
+            <label for="adminLoginPassword">Password</label>
+            <div class="input-wrap">
+              <input type="password" id="adminLoginPassword" required autocomplete="current-password" placeholder="Enter your password">
+              <button type="button" class="pw-toggle" data-target="adminLoginPassword" aria-label="Show password"><svg class="i"><use href="#i-eye"/></svg></button>
+            </div>
+          </div>
+          <p id="adminLoginMessage" class="notice" style="display:none" role="alert"></p>
+          <div class="form-actions"><button class="btn primary lg block" type="submit"><svg class="i"><use href="#i-lock"/></svg>Sign in securely</button></div>
+        </form>
+        <div class="secure-note"><svg class="i"><use href="#i-shield"/></svg>Access is verified by the server. Student accounts can't open this portal.</div>
+        <div class="admin-links">
+          <span>New administrator? <a href="#admin-register">Register with an invitation</a></span>
+          <a class="back" href="#login">Student? Go to student login</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ADMIN REGISTRATION (invitation only) ===================== -->
+<section class="page" id="admin-register">
+  <div class="admin-auth-wrap portal-dark">
+    <div class="admin-auth-top">
+      <a class="logo" href="#home"><span class="logo-mark"><svg class="i"><use href="#i-wrench"/></svg></span>CampusFix <small>Admin</small></a>
+      <div class="row"><a class="btn ghost small" href="#home">← CampusFix website</a><button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark mode" title="Toggle light / dark mode"><svg class="i i-moon"><use href="#i-moon"/></svg><svg class="i i-sun"><use href="#i-sun"/></svg></button></div>
+    </div>
+    <div class="admin-auth-main">
+      <div class="admin-card">
+        <div class="shield"><svg class="i"><use href="#i-key"/></svg></div>
+        <span class="eyebrow">CampusFix Admin Portal</span>
+        <h2>Admin registration</h2>
+        <p>Create an administrator account using the invitation you were given.</p>
+        <form id="adminRegisterForm" novalidate>
+          <div class="field">
+            <label for="adminRegisterName">Full name</label>
+            <input id="adminRegisterName" type="text" required autocomplete="name" placeholder="Your full name">
+          </div>
+          <div class="field">
+            <label for="adminRegisterEmail">Work / admin email</label>
+            <input id="adminRegisterEmail" type="email" required autocomplete="email" placeholder="you@college.edu">
+          </div>
+          <div class="formgrid field">
+            <div>
+              <label for="adminRegisterPassword">Password</label>
+              <div class="input-wrap">
+              <input type="password" id="adminRegisterPassword" required autocomplete="new-password" placeholder="8+ characters" minlength="8">
+              <button type="button" class="pw-toggle" data-target="adminRegisterPassword" aria-label="Show password"><svg class="i"><use href="#i-eye"/></svg></button>
+            </div>
+            </div>
+            <div>
+              <label for="adminRegisterConfirm">Confirm password</label>
+              <div class="input-wrap">
+              <input type="password" id="adminRegisterConfirm" required autocomplete="new-password" placeholder="Repeat password" minlength="8">
+              <button type="button" class="pw-toggle" data-target="adminRegisterConfirm" aria-label="Show password"><svg class="i"><use href="#i-eye"/></svg></button>
+            </div>
+            </div>
+          </div>
+          <div class="field">
+            <label for="adminInvitationCode">Admin Unique ID</label>
+            <input id="adminInvitationCode" type="text" required autocomplete="off" spellcheck="false" placeholder="Enter your invitation code">
+            <p class="hint">Enter the unique invitation code provided by the CampusFix project administrator.</p>
+          </div>
+          <p id="adminRegisterMessage" class="notice" style="display:none" role="alert"></p>
+          <div class="form-actions"><button class="btn primary lg block" type="submit">Create admin account</button></div>
+        </form>
+        <div class="admin-links">
+          <span>Already have an admin account? <a href="#admin-login">Admin login</a></span>
+          <a class="back" href="#home">← Back to CampusFix</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== STUDENT DASHBOARD ===================== -->
+<section class="page" id="student">
+  <div class="container page-pad">
+    <div class="page-header">
+      <div>
+        <span class="eyebrow">Student portal</span>
+        <h2 id="studentWelcome">Welcome back</h2>
+        <p>Keep track of the confidential complaints linked to your account.</p>
+      </div>
+      <div class="header-actions">
+        <a class="btn primary" href="#report"><svg class="i"><use href="#i-plus"/></svg>Report new issue</a>
+        <a class="btn alt" href="#track"><svg class="i"><use href="#i-search"/></svg>Track complaint</a>
+        <button class="btn alt" type="button" id="studentLogout"><svg class="i"><use href="#i-logout"/></svg>Log out</button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="card stat"><div class="stat-top">Total complaints<span class="ico"><svg class="i"><use href="#i-inbox"/></svg></span></div><strong id="myTotal">0</strong></div>
+      <div class="card stat s-pending"><div class="stat-top">Pending<span class="ico"><svg class="i"><use href="#i-clock"/></svg></span></div><strong id="myPending">0</strong></div>
+      <div class="card stat s-progress"><div class="stat-top">In progress<span class="ico"><svg class="i"><use href="#i-loader"/></svg></span></div><strong id="myProgress">0</strong></div>
+      <div class="card stat s-resolved"><div class="stat-top">Resolved<span class="ico"><svg class="i"><use href="#i-check-circle"/></svg></span></div><strong id="myResolved">0</strong></div>
+    </div>
+
+    <div id="studentMessage" class="notice" style="display:none;margin:0 0 16px"></div>
+
+    <div class="card">
+      <div class="card-head"><div><h3>My complaints</h3><p>Anonymous reports are not listed here — track them with their ID.</p></div></div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Tracking ID</th><th>Image</th><th>Title</th><th>Category</th><th>Location</th><th>Status</th><th>Submitted</th><th></th></tr></thead>
+          <tbody id="studentComplaints"><tr><td colspan="8" class="loading-row">Loading complaints…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== REPORT ===================== -->
+<section class="page" id="report">
+  <div class="container page-pad">
+    <div class="narrow">
+      <div class="page-header">
+        <div>
+          <span class="eyebrow">Campus reporting</span>
+          <h2>Report a problem</h2>
+          <p>Tell us what's wrong and where. You'll get a tracking ID straight away.</p>
+        </div>
+      </div>
+
+      <div class="card" id="reportCard">
+        <form id="complaintForm" enctype="multipart/form-data">
+          <div class="form-section">
+            <h3>Reporting type</h3>
+            <p>Choose how your identity is handled.</p>
+            <select name="is_anonymous" id="reportingType" required class="sr-only" tabindex="-1" aria-hidden="true">
+              <option value="true">Anonymous — Do not link my account</option>
+              <option value="false">Confidential — Link to my account</option>
+            </select>
+            <div class="choice-grid" role="radiogroup" aria-label="Reporting type">
+              <label class="choice selected" data-value="true">
+                <input type="radio" name="reporting_choice" value="true" checked>
+                <span class="ico"><svg class="i"><use href="#i-incognito"/></svg></span>
+                <div><strong>Anonymous</strong><span>Not linked to any account. Track it only with your ID.</span></div>
+              </label>
+              <label class="choice" data-value="false">
+                <input type="radio" name="reporting_choice" value="false">
+                <span class="ico"><svg class="i"><use href="#i-lock"/></svg></span>
+                <div><strong>Confidential</strong><span>Linked to your account and shown on your dashboard. Requires login.</span></div>
+              </label>
+            </div>
+            <p id="confidentialHint" class="notice" style="display:none"><svg class="i"><use href="#i-alert"/></svg><span>You need to <a href="#login">log in</a> to submit a confidential complaint.</span></p>
+          </div>
+
+          <div class="form-section">
+            <h3>Issue details</h3>
+            <p>Be specific so the right team can act quickly.</p>
+            <div class="field">
+              <label for="complaintTitle">Title <span class="counter" id="titleCount">0 / 150</span></label>
+              <input id="complaintTitle" type="text" name="title" required maxlength="150" placeholder="e.g. Broken ceiling fan in classroom">
+            </div>
+            <div class="formgrid field">
+              <div>
+                <label for="complaintCategory">Category</label>
+                <select id="complaintCategory" name="category" required>
+                  <option value="">Choose category</option>
+                  <option>Electrical</option>
+                  <option>Plumbing</option>
+                  <option>Cleanliness</option>
+                  <option>Furniture</option>
+                  <option>Infrastructure</option>
+                  <option>Internet/Wi-Fi</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div>
+                <label for="location">Location</label>
+                <select id="location" name="location" required>
+                  <option value="">Choose location</option>
+                  <option>Main Building</option>
+                  <option>Computer Laboratory</option>
+                  <option>Library</option>
+                  <option>Classroom</option>
+                  <option>Washroom</option>
+                  <option>Parking Area</option>
+                  <option>Sports Ground</option>
+                  <option>Room 204</option>
+                  <option>Computer Lab 1</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="complaintDescription">Description <span class="counter" id="descCount">0 / 3000</span></label>
+              <textarea id="complaintDescription" name="description" rows="5" required maxlength="3000" placeholder="What happened, when did you notice it, and how is it affecting people?"></textarea>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Photo <span style="font-weight:500;color:var(--faint)">(optional)</span></h3>
+            <p>A clear photo helps staff understand the problem.</p>
+            <label class="dropzone" id="dropzone">
+              <input type="file" name="image" id="complaintImage" accept=".jpg,.jpeg,.png,.webp">
+              <span class="ico"><svg class="i"><use href="#i-image"/></svg></span>
+              <div><strong>Click to upload or drag a photo here</strong><span>PNG, JPG or WEBP · up to 5 MB</span></div>
+            </label>
+            <div class="preview" id="imagePreview">
+              <img id="imagePreviewImg" alt="Selected photo preview">
+              <div class="meta"><strong id="imagePreviewName"></strong><span id="imagePreviewSize"></span></div>
+              <button type="button" class="icon-btn" id="imageRemove" aria-label="Remove photo"><svg class="i"><use href="#i-x"/></svg></button>
+            </div>
+          </div>
+
+          <div style="padding:0 24px"><p id="complaintMessage" class="notice" style="display:none;margin-bottom:18px" role="alert"></p></div>
+
+          <div class="form-foot">
+            <p><svg class="i" style="width:14px;height:14px;vertical-align:-2px"><use href="#i-shield"/></svg> Your tracking ID is shown once after submitting.</p>
+            <div class="header-actions">
+              <a class="btn alt" href="#home">Cancel</a>
+              <button class="btn primary" type="submit">Submit complaint</button>
+            </div>
+          </div>
+        </form>
+
+        <div id="trackingResult" class="success-panel"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TRACK ===================== -->
+<section class="page" id="track">
+  <div class="container page-pad">
+    <div class="narrow">
+      <div class="page-header">
+        <div>
+          <span class="eyebrow">Live status</span>
+          <h2>Track your complaint</h2>
+          <p>Enter your tracking ID to see the latest status and full update history.</p>
+        </div>
+      </div>
+
+      <div class="card card-pad">
+        <form id="trackForm">
+          <label for="trackingId">Tracking ID</label>
+          <div class="track-search">
+            <div class="input-wrap"><svg class="i"><use href="#i-search"/></svg>
+              <input type="text" id="trackingId" placeholder="CF-xxxxxxxxxxxxxxxxxxxxxxxx" required autocomplete="off" spellcheck="false">
+            </div>
+            <button class="btn primary" type="submit">Track complaint</button>
+          </div>
+        </form>
+        <p id="trackMessage" class="notice" style="display:none" role="status"></p>
+      </div>
+
+      <div id="trackResult" class="card" style="display:none;margin-top:20px">
+        <div id="complaintDetails"></div>
+        <div class="history">
+          <h4>Status history</h4>
+          <div id="complaintTimeline" class="timeline"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ADMIN ===================== -->
+<section class="page" id="admin">
+  <div class="admin-shell">
+    <aside class="sidebar adminnav" aria-label="Admin">
+      <div class="side-brand"><span class="logo-mark"><svg class="i"><use href="#i-wrench"/></svg></span><div><b>CampusFix Admin</b><span id="adminName">Administrator</span><span class="portal-tag">Admin Portal</span></div></div>
+      <span class="side-label">Overview</span>
+      <a href="#admin" class="active" data-admin-link="top"><svg class="i"><use href="#i-grid"/></svg>Dashboard</a>
+      <a href="#admin-analytics" data-admin-link="analytics"><svg class="i"><use href="#i-chart"/></svg>Analytics</a>
+      <a href="#admin-complaints" data-admin-link="complaints"><svg class="i"><use href="#i-list"/></svg>All complaints</a>
+      <span class="side-label">Public</span>
+      <a href="#track"><svg class="i"><use href="#i-search"/></svg>Track complaint</a>
+      <a href="#home"><svg class="i"><use href="#i-home"/></svg>Public site</a>
+      <div class="side-bottom"><button type="button" class="side-btn" data-theme-toggle aria-label="Switch to dark mode"><svg class="i i-moon"><use href="#i-moon"/></svg><svg class="i i-sun"><use href="#i-sun"/></svg><span data-theme-label>Dark mode</span></button><a href="#home" id="adminLogout"><svg class="i"><use href="#i-logout"/></svg>Log out</a></div>
+    </aside>
+
+    <div class="admin-main" id="admin-top">
+      <div class="admin-topbar">
+        <span class="crumb">Admin Portal / <b>Operations</b></span>
+        <div class="row"><span class="nav-user" style="display:flex"><span class="avatar" id="adminAvatar">A</span><span id="adminTopName" style="font-size:.86rem;font-weight:600"></span></span><button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark mode" title="Toggle light / dark mode"><svg class="i i-moon"><use href="#i-moon"/></svg><svg class="i i-sun"><use href="#i-sun"/></svg></button></div>
+      </div>
+      <div class="page-header">
+        <div>
+          <span class="eyebrow">Administration</span>
+          <h2>Admin dashboard</h2>
+          <p>Monitor and manage campus complaints.</p>
+        </div>
+        <div class="header-actions"><button class="btn alt" type="button" id="adminRefresh"><svg class="i"><use href="#i-refresh"/></svg>Refresh</button></div>
+      </div>
+
+      <div id="adminMessage" class="notice" style="display:none;margin:0 0 16px"></div>
+
+      <div class="stats">
+        <div class="card stat"><div class="stat-top">Total complaints<span class="ico"><svg class="i"><use href="#i-inbox"/></svg></span></div><strong id="adminTotal">0</strong></div>
+        <div class="card stat s-pending"><div class="stat-top">Pending<span class="ico"><svg class="i"><use href="#i-clock"/></svg></span></div><strong id="adminPending">0</strong></div>
+        <div class="card stat s-progress"><div class="stat-top">In progress<span class="ico"><svg class="i"><use href="#i-loader"/></svg></span></div><strong id="adminProgress">0</strong></div>
+        <div class="card stat s-resolved"><div class="stat-top">Resolved<span class="ico"><svg class="i"><use href="#i-check-circle"/></svg></span></div><strong id="adminResolved">0</strong></div>
+      </div>
+
+      <div class="chart-grid" id="admin-analytics">
+        <div class="card"><div class="card-head"><h3>Status distribution</h3></div><div class="chart-box"><canvas id="statusChart"></canvas></div></div>
+        <div class="card"><div class="card-head"><h3>Complaints by category</h3></div><div class="chart-box"><canvas id="categoryChart"></canvas></div></div>
+        <div class="card"><div class="card-head"><h3>Monthly complaint trends</h3><p>Reports received over the last six months.</p></div><div class="chart-box"><canvas id="monthlyChart"></canvas></div></div>
+        <div class="card"><div class="card-head"><h3>Priority distribution</h3></div><div class="chart-box"><canvas id="priorityChart"></canvas></div></div>
+      </div>
+
+      <div class="card" id="admin-complaints">
+        <div class="card-head"><div><h3>All complaints</h3><p>Search, filter and manage every report.</p></div></div>
+        <div class="toolbar">
+          <div class="search"><svg class="i"><use href="#i-search"/></svg>
+            <label for="adminSearch" class="sr-only">Search</label>
+            <input id="adminSearch" placeholder="Search tracking ID, title or student">
+          </div>
+          <label for="adminStatusFilter" class="sr-only">Filter by status</label>
+          <select id="adminStatusFilter">
+            <option value="">All statuses</option>
+            <option>Pending</option>
+            <option>In Progress</option>
+            <option>Resolved</option>
+          </select>
+          <label for="adminCategoryFilter" class="sr-only">Filter by category</label>
+          <select id="adminCategoryFilter">
+            <option value="">All categories</option>
+            <option>Electrical</option><option>Plumbing</option><option>Cleanliness</option><option>Furniture</option><option>Infrastructure</option><option>Internet/Wi-Fi</option><option>Other</option>
+          </select>
+          <label for="adminPriorityFilter" class="sr-only">Filter by priority</label>
+          <select id="adminPriorityFilter">
+            <option value="">All priorities</option>
+            <option>Low</option><option>Medium</option><option>High</option><option>Critical</option>
+          </select>
+          <span class="count" id="adminCount"></span>
+        </div>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Tracking ID</th><th>Image</th><th>Title</th><th>Category</th><th>Location</th><th>Student</th><th>Priority</th><th>Status</th><th></th></tr></thead>
+            <tbody id="adminComplaints"><tr><td colspan="9" class="loading-row">Open the admin dashboard to load complaints.</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- Admin edit drawer (kept outside main so it overlays everything) -->
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<aside id="adminEditPanel" aria-label="Update complaint" aria-hidden="true">
+  <div class="drawer-head">
+    <div><h3>Update complaint</h3><p id="editingTrackingId" class="mono"></p></div>
+    <button class="icon-btn" type="button" id="drawerClose" aria-label="Close"><svg class="i"><use href="#i-x"/></svg></button>
+  </div>
+  <div class="drawer-body">
+    <div class="drawer-summary" id="editSummary"></div>
+    <div class="field"><label for="editStatus">Status</label>
+      <select id="editStatus"><option>Pending</option><option>In Progress</option><option>Resolved</option></select></div>
+    <div class="field"><label for="editPriority">Priority</label>
+      <select id="editPriority"><option>Low</option><option>Medium</option><option>High</option><option>Critical</option></select></div>
+    <div class="field"><label for="editRemarks">Remarks</label>
+      <textarea id="editRemarks" rows="4" placeholder="Add a maintenance update visible in the status history…"></textarea>
+      <p class="hint">Remarks are saved with a status change.</p></div>
+    <p id="adminEditMessage" class="notice" style="display:none" role="alert"></p>
+  </div>
+  <div class="drawer-foot">
+    <button class="btn alt" type="button" id="cancelAdminEdit">Cancel</button>
+    <button class="btn primary" type="button" id="saveAdminChanges">Save changes</button>
+  </div>
+</aside>
+
+<div class="toast" id="toast" role="status"></div>
+
+<footer class="site">
+  <div class="container">
+    <div class="foot-inner">
+      <div><a class="logo" href="#home"><span class="logo-mark"><svg class="i"><use href="#i-wrench"/></svg></span>CampusFix</a>
+        <p>Campus maintenance reporting for students and staff. Report it. Track it. Fix it.</p></div>
+      <div><h4>Platform</h4><ul><li><a href="#report">Report an issue</a></li><li><a href="#track">Track a complaint</a></li><li><a href="#how">How it works</a></li></ul></div>
+      <div><h4>Account</h4><ul><li><a href="#login">Log in</a></li><li><a href="#register">Create account</a></li><li><a href="#student">Student dashboard</a></li></ul></div>
+      <div><h4>Staff</h4><ul><li><a href="#admin-login">Administrator Portal</a></li><li><a href="#admin-register">Admin registration</a></li></ul></div>
+    </div>
+    <div class="foot-bottom"><span>© 2026 CampusFix. Built for a better campus.</span><span>Anonymous option · Transparent by design</span></div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/static/js/config.js"></script>
+<script src="/static/js/theme.js"></script>
+<script src="/static/js/main.js"></script>
+<script src="/static/js/navigation.js"></script>
+<script src="/static/js/auth.js"></script>
+<script src="/static/js/complaints.js"></script>
+<script src="/static/js/image-preview.js"></script>
+<script src="/static/js/student.js"></script>
+<script src="/static/js/charts.js"></script>
+<script src="/static/js/admin.js"></script>
+</html>

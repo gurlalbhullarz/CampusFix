@@ -1,22 +1,21 @@
-import sqlite3
-import os
 
-# Database location
+import os
+import sqlite3
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-DATABASE_PATH = os.path.join(BASE_DIR, "campusfix.db")
+DATABASE_DIR = os.path.join(BASE_DIR, "database")
+os.makedirs(DATABASE_DIR, exist_ok=True)
+
+DATABASE_PATH = os.path.join(DATABASE_DIR, "campusfix.db")
+
 
 def get_connection():
-
     connection = sqlite3.connect(DATABASE_PATH)
-
-    # Enable foreign key constraints
-    connection.execute("PRAGMA foreign_keys = ON")
-
-    # Return rows like dictionaries
     connection.row_factory = sqlite3.Row
-
+    connection.execute("PRAGMA foreign_keys = ON")
     return connection
+
 def create_tables():
 
     connection = get_connection()
